@@ -24,6 +24,8 @@ def chatbot():
     message = ''
     while message.lower() != "exit":
         message = input("Usuário -> ").strip()
+        if message.lower() == "exit":
+            break
         
         retrive = vectorstore.as_retriever(
             search_type="similarity",
@@ -45,11 +47,15 @@ def chatbot():
                 show_image(results[0][0])
     
         print(f"----------------------------------------------------------------\nContexto: {context}\n----------------------------------------------------------------")
-    # Geração de responstas usando múltiplos modelos
-    #summaries = generate_response_with_models(models, context, message)
+        # Geração de responstas usando múltiplos modelos
+        summaries = generate_response_with_models(models, context, message)
+        
+        for summary in summaries:
+            print(f"Resumo: {summary}\n")
 
-    # Avaliação e seleção da melhor resposta
-    #best_response = evaluate_responses(summaries, message)
+        # Avaliação e seleção da melhor resposta
+        best_response = evaluate_responses(summaries, message)
+        print(f"Melhor resposta: {best_response}\n")
 
     #return best_response
 

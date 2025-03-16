@@ -12,7 +12,6 @@ def generate_response_with_models(models, context, question):
     Gera respostas usando múltiplos modelos de LLM.
     """
     response = [invoke_llm(model_name, context, question) for model_name in models]
-    print (f"---------------------------------------\nRespostas dos modelos: {response}\n----------------------------------------")
     return response
 
 def evaluate_responses (responses, question):
