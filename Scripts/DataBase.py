@@ -86,23 +86,34 @@ def loadAndStoreDocuments(paths, persist_directory=default_persist_directory):
     try:
         print("Carregando documentos...")
         splitted_texts = loadDocuments(paths)
+        all_image_descriptions = []
+
         for path in paths:
             image_ids_paths = extract_images(path)
             ids_res_dict = get_images_description(image_ids_paths)
+            for image_id, description in ids_res_dict.items():
+                all_image_descriptions.append(description)
 
         if not splitted_texts:
             print("Falha ao carregar os documentos. Verifique os caminhos e tente novamente.")
             return None
-        
+
+        # Adiciona as descrições das imagens aos textos divididos
+        for description in all_image_descriptions:
+            splitted_texts.append({
+                'text': description,
+                'metadata': {'type': 'image_description'}
+            })
+
         print("Armazenando documentos no ChromaDB...")
         vectorstore = storageInChroma(splitted_texts, persist_directory=persist_directory)
         multimodal_store = loadAndStoreImages(image_ids_paths, ids_res_dict)
-        
+
         if vectorstore and multimodal_store:
             print(f"Documentos armazenados com sucesso no ChromaDB! Dados persistidos em: {persist_directory}")
         else:
             print("Falha ao armazenar os documentos no ChromaDB.")
-        
+
         return vectorstore
     except Exception as e:
         print(f"Ocorreu um erro ao armazenar texto ou imagem: {e}")
