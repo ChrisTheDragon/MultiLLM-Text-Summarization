@@ -31,9 +31,9 @@ def chatbot():
         )        
 
         retrive_doc = retrive.invoke(message)
-        context = ' '.join([doc.metadata for doc in retrive_doc])
+        #print(f"Documentos recuperados: {retrive_doc}\n")
+        context = ' '.join([doc.page_content for doc in retrive_doc])
 
-        print(f"----------------------------------------------------------------\nContexto: {context}\n----------------------------------------------------------------")
 
         if image_vector_store.count() > 1:
             results = image_vector_store.query(
@@ -41,9 +41,10 @@ def chatbot():
                 n_results=1,
                 include=[ 'distances', 'metadatas', 'data', 'uris']
             )
-            if results['distances'][0][0] < 1.5:
+            if results['distances'][0][0] < 3.0:
                 show_image(results[0][0])
     
+        print(f"----------------------------------------------------------------\nContexto: {context}\n----------------------------------------------------------------")
     # Geração de responstas usando múltiplos modelos
     #summaries = generate_response_with_models(models, context, message)
 

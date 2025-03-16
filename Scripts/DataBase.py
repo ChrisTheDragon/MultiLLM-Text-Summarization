@@ -149,13 +149,16 @@ def loadAndStoreImages(images_ids_and_paths, ids_res_dict):
         Retorna o banco de dados atualizado caso dê certo e retorna none caso nao de certo
     '''
     multimodal_db = initializeChromaMultimodal(default_persist_directory)
+    vectordb = initializeChromaDB()
 
     if multimodal_db is None:
         print("Falha ao inicializar o banco de dados multimodal.")
         return None
 
+    descricoes = []
     try: 
         for id in images_ids_and_paths:
+            print(f"Adicionando imagem {id[0]} ao banco de dados...")
             multimodal_db.add(
                 ids=[id[0]],
                 uris=[id[1]],
@@ -163,6 +166,13 @@ def loadAndStoreImages(images_ids_and_paths, ids_res_dict):
                     "description": ids_res_dict[id[0]]
                 }
             )
+            print(f"Imagem {id[0]} adicionada ao banco de dados multimodal com sucesso!")
+            
+            descricoes.append(ids_res_dict[id[0]]) 
+            print("Adicionando descrição ao banco de dados vetorial...")               
+            vectordb.add_texts(descricoes)
+            print("Descrição adicionada ao banco de dados vetorial com sucesso!")
+            
     except Exception as e:
         print(f"Ocorreu um erro ao armazenar imagens: {e}")
     return multimodal_db
