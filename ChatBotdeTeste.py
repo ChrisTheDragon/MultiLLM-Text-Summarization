@@ -3,9 +3,6 @@ from Scripts.LLM_summarization import generate_response_with_models, evaluate_re
 from Scripts.PrecessPDF import show_image
 import os 
 
- 
-os.environ["UNSTRUCTURED_API_KEY"] = "EHvRE7FA1u9BaQ0FN7AQv2URUBK8ig"
-os.environ["UNSTRUCTURED_API_URL"] = "https://api.unstructuredapp.io/general/v0/general"
 vectorstore = initializeChromaDB()
 image_vector_store = initializeChromaMultimodal()
 
@@ -39,14 +36,13 @@ def chatbot():
         #print(f"Documentos recuperados: {retrive_doc}\n")
         context = ' '.join([doc.page_content for doc in retrive_doc])
 
-        print(image_vector_store.count())
         if image_vector_store.count() >= 1:
             results = image_vector_store.query(
                 query_texts=[message],
                 n_results=1,
                 include=[ 'distances', 'metadatas', 'data', 'uris']
             )
-            print(results['distances'][0][0])
+            #print(results['distances'][0][0])
             if results['distances'][0][0] < 3.0:
                 show_image(results['uris'][0][0]) 
     
